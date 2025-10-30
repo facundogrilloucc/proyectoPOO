@@ -1,0 +1,22 @@
+Nombre                 DNI        Tipo     Ingreso  Estado   N° Cliente
+-----------------------------------------------------------------------
+Juan Pérez             41766924   Plata    2011     ACTIVO   1001      
+María Gómez            35824669   Oro      2023     ACTIVO   1002      
+Carlos López           26142425   Plata    2018     ACTIVO   1003      
+Ana Martínez           48823131   Plata    2013     BAJA     1004      
+Luis Fernández         45937822   Platino  2020     ACTIVO   1005      
+Sofía Herrera          31529009   Platino  2012     ACTIVO   1006      
+Diego Ruiz             48383822   Oro      2018     BAJA     1007      
+Camila Torres          48862944   Platino  2017     BAJA     1008      
+Javier Sánchez         27104332   Oro      2017     ACTIVO   1009      
+Lucía Castro           21174665   Oro      2022     ACTIVO   1010      
+Martín Díaz            23552992   Plata    2021     BAJA     1011      
+Valentina Romero       33970001   Oro      2011     BAJA     1012      
+Pedro Silva            43699488   Oro      2007     BAJA     1013      
+Florencia Navarro      27508888   Plata    2011     ACTIVO   1014      
+Tomás Vega             29681401   Plata    2008     ACTIVO   1015      
+Julieta Cabrera        27714753   Oro      2022     ACTIVO   1016      
+Nicolás Benítez        23662166   Plata    2011     BAJA     1017      
+Daniela Ortiz          42126340   Plata    2006     ACTIVO   1018      
+Agustín Rojas          34367150   Plata    2010     ACTIVO   1019      
+Micaela Duarte         39212585   Platino  2013     ACTIVO   1020      
