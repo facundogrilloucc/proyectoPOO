@@ -1,8 +1,33 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
 using namespace std;
+
+// Clases de excepciones personalizadas (solo 2 tipos: ArgumentoInvalido y Memoria)
+class Excepcion
+{
+protected:
+    string mensaje;
+public:
+    Excepcion() : mensaje("Error desconocido") {}
+    Excepcion(string msg) : mensaje(msg) {}
+    virtual string what() const { return mensaje; }
+    virtual ~Excepcion() {}
+};
+
+class ExcepcionArgumentoInvalido : public Excepcion
+{
+public:
+    ExcepcionArgumentoInvalido() : Excepcion("Argumento inválido") {}
+    ExcepcionArgumentoInvalido(string msg) : Excepcion(msg) {}
+};
+
+class ExcepcionMemoria : public Excepcion
+{
+public:
+    ExcepcionMemoria() : Excepcion("Error de asignación de memoria") {}
+    ExcepcionMemoria(string msg) : Excepcion(msg) {}
+};
 
 class persona
 {
@@ -71,9 +96,22 @@ private:
     archivo_clientes lista_clientes;
     cliente cl;
     personal pr;
+    
+    // Arreglos dinámicos para almacenar clientes en memoria
+    string* nombres;
+    string* dnis;
+    string* tipos;
+    string* ingresos;
+    string* estados;
+    string* numClientes;
+    int totalClientes;
+    int capacidad;
+    
 public:
     banco();
     banco(string, archivo_clientes, cliente, personal);
+    ~banco();  // Destructor para liberar memoria
+    
     void setNombreBanco(string);
     string getNombreBanco();
     void setArchivoClientes(archivo_clientes);
@@ -84,8 +122,12 @@ public:
     personal getPersonal();
     void mostrar_datos();
     
-    // Nuevas funciones para gestión de clientes
+    // Funciones para cargar/guardar desde archivo
+    void cargarDesdeArchivo();
+    void guardarEnArchivo();
+    
+    // Funciones de gestión de clientes (ahora usan arreglos en memoria)
     void mostrarListaClientes();
-    void mostrarDetallesCliente(int numCliente);
-    void cambiarEstadoCliente(int numCliente);
+    void mostrarDetallesCliente(string numCliente);
+    void cambiarEstadoCliente(string numCliente);
 };

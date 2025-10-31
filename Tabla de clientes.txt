@@ -1,0 +1,30 @@
+Juan Pérez
+43559030
+Oro
+2023
+ACTIVO
+1001
+María Gómez
+22305945
+Plata
+2014
+ACTIVO
+1002
+Carlos López
+37386298
+Plata
+2007
+ACTIVO
+1003
+Ana Martínez
+45168247
+Plata
+2024
+BAJA
+1004
+Luis Fernández
+34424588
+Platino
+2015
+BAJA
+1005

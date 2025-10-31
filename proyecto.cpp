@@ -45,9 +45,7 @@ void persona::mostrar_datos()
 
 // Implementación de la clase cliente
 cliente::cliente() {}
-
-cliente::cliente(long _dni, string _nombre, int _anio_ingreso, string _tipo_cliente, string _estado_cliente, long _numero_cliente)
-    : persona(_dni, _nombre, _anio_ingreso)
+cliente::cliente(long _dni, string _nombre, int _anio_ingreso, string _tipo_cliente, string _estado_cliente, long _numero_cliente): persona(_dni, _nombre, _anio_ingreso)
 {
     tipo_cliente = _tipo_cliente;
     estado_cliente = _estado_cliente;
@@ -94,8 +92,7 @@ void cliente::mostrar_datos()
 // Implementación de la clase personal
 personal::personal() {}
 
-personal::personal(long _dni, string _nombre, int _anio_ingreso, string _area_trabajo)
-    : persona(_dni, _nombre, _anio_ingreso)
+personal::personal(long _dni, string _nombre, int _anio_ingreso, string _area_trabajo) : persona(_dni, _nombre, _anio_ingreso)
 {
     area_trabajo = _area_trabajo;
 }
@@ -117,7 +114,22 @@ void personal::mostrar_datos()
 }
 
 // Implementación de la clase banco
-banco::banco() {}
+banco::banco()
+{
+    // Inicializar arreglos dinámicos
+    capacidad = 10;
+    totalClientes = 0;
+    nombres = new string[capacidad];
+    dnis = new string[capacidad];
+    tipos = new string[capacidad];
+    ingresos = new string[capacidad];
+    estados = new string[capacidad];
+    numClientes = new string[capacidad];
+    
+    if (nombres == nullptr || dnis == nullptr || tipos == nullptr || 
+        ingresos == nullptr || estados == nullptr || numClientes == nullptr)
+        throw ExcepcionMemoria("No se pudo asignar memoria para los arreglos");
+}
 
 banco::banco(string _nombre_banco, archivo_clientes _lista_clientes, cliente _cl, personal _pr)
 {
@@ -125,6 +137,31 @@ banco::banco(string _nombre_banco, archivo_clientes _lista_clientes, cliente _cl
     lista_clientes = _lista_clientes;
     cl = _cl;
     pr = _pr;
+    
+    // Inicializar arreglos dinámicos
+    capacidad = 10;
+    totalClientes = 0;
+    nombres = new string[capacidad];
+    dnis = new string[capacidad];
+    tipos = new string[capacidad];
+    ingresos = new string[capacidad];
+    estados = new string[capacidad];
+    numClientes = new string[capacidad];
+    
+    if (nombres == nullptr || dnis == nullptr || tipos == nullptr || 
+        ingresos == nullptr || estados == nullptr || numClientes == nullptr)
+        throw ExcepcionMemoria("No se pudo asignar memoria para los arreglos");
+}
+
+banco::~banco()
+{
+    // Liberar memoria
+    delete[] nombres;
+    delete[] dnis;
+    delete[] tipos;
+    delete[] ingresos;
+    delete[] estados;
+    delete[] numClientes;
 }
 
 void banco::setNombreBanco(string _nombre_banco)
@@ -172,185 +209,215 @@ void banco::mostrar_datos()
     cout << "Nombre del Banco: " << nombre_banco << endl;
 }
 
+// Función para cargar todos los clientes desde el archivo
+void banco::cargarDesdeArchivo()
+{
+    try
+    {
+        ifstream archivo("Tabla de clientes.txt");
+        
+        if (!archivo.is_open())
+            throw ExcepcionArgumentoInvalido("No se pudo abrir el archivo");
+        
+        totalClientes = 0;
+        
+        // Leer clientes (cada 6 líneas = 1 cliente)
+        while (true)
+        {
+            // Si necesitamos más espacio, redimensionar
+            if (totalClientes >= capacidad)
+            {
+                capacidad *= 2;
+                string* nuevosNombres = new string[capacidad];
+                string* nuevosDnis = new string[capacidad];
+                string* nuevosTipos = new string[capacidad];
+                string* nuevosIngresos = new string[capacidad];
+                string* nuevosEstados = new string[capacidad];
+                string* nuevosNumClientes = new string[capacidad];
+                
+                if (nuevosNombres == nullptr || nuevosDnis == nullptr || nuevosTipos == nullptr ||
+                    nuevosIngresos == nullptr || nuevosEstados == nullptr || nuevosNumClientes == nullptr)
+                    throw ExcepcionMemoria("No se pudo redimensionar");
+                
+                // Copiar datos existentes
+                for (int i = 0; i < totalClientes; i++)
+                {
+                    nuevosNombres[i] = nombres[i];
+                    nuevosDnis[i] = dnis[i];
+                    nuevosTipos[i] = tipos[i];
+                    nuevosIngresos[i] = ingresos[i];
+                    nuevosEstados[i] = estados[i];
+                    nuevosNumClientes[i] = numClientes[i];
+                }
+                
+                // Liberar memoria anterior
+                delete[] nombres;
+                delete[] dnis;
+                delete[] tipos;
+                delete[] ingresos;
+                delete[] estados;
+                delete[] numClientes;
+                
+                // Asignar nuevos arreglos
+                nombres = nuevosNombres;
+                dnis = nuevosDnis;
+                tipos = nuevosTipos;
+                ingresos = nuevosIngresos;
+                estados = nuevosEstados;
+                numClientes = nuevosNumClientes;
+            }
+            
+            // Leer 6 líneas (1 cliente)
+            string nombre, dni, tipo, ingreso, estado, numCliente;
+            
+            if (!getline(archivo, nombre)) break;      // Línea 1: Nombre
+            if (!getline(archivo, dni)) break;         // Línea 2: DNI
+            if (!getline(archivo, tipo)) break;        // Línea 3: Tipo
+            if (!getline(archivo, ingreso)) break;     // Línea 4: Año Ingreso
+            if (!getline(archivo, estado)) break;      // Línea 5: Estado
+            if (!getline(archivo, numCliente)) break;  // Línea 6: NumCliente
+            
+            // Guardar en arreglos
+            nombres[totalClientes] = nombre;
+            dnis[totalClientes] = dni;
+            tipos[totalClientes] = tipo;
+            ingresos[totalClientes] = ingreso;
+            estados[totalClientes] = estado;
+            numClientes[totalClientes] = numCliente;
+            
+            totalClientes++;
+        }
+        
+        archivo.close();
+        cout << "Datos cargados: " << totalClientes << " clientes en memoria." << endl;
+    }
+    catch (const ExcepcionArgumentoInvalido& e)
+    {
+        cerr << "Error al cargar: " << e.what() << endl;
+    }
+    catch (const ExcepcionMemoria& e)
+    {
+        cerr << "Error de memoria: " << e.what() << endl;
+    }
+}
+
+// Función para guardar todos los clientes en el archivo
+void banco::guardarEnArchivo()
+{
+    try
+    {
+        ofstream archivo("Tabla de clientes.txt");
+        
+        if (!archivo.is_open())
+            throw ExcepcionArgumentoInvalido("No se pudo abrir el archivo para escritura");
+        
+        // Escribir todos los clientes (6 líneas por cliente)
+        for (int i = 0; i < totalClientes; i++)
+        {
+            archivo << nombres[i] << endl;
+            archivo << dnis[i] << endl;
+            archivo << tipos[i] << endl;
+            archivo << ingresos[i] << endl;
+            archivo << estados[i] << endl;
+            archivo << numClientes[i] << endl;
+        }
+        
+        archivo.close();
+    }
+    catch (const ExcepcionArgumentoInvalido& e)
+    {
+        cerr << "Error al guardar: " << e.what() << endl;
+    }
+}
+
 // Implementación de las funciones de gestión de clientes del banco
 
-// Función para mostrar la lista de todos los clientes del archivo CSV
+// Función para mostrar la lista de todos los clientes (desde memoria)
 void banco::mostrarListaClientes()
 {
-    ifstream archivo("Tabla de clientes.csv");
-    
-    if (!archivo.is_open())
-    {
-        cout << "Error: No se pudo abrir el archivo 'Tabla de clientes.csv'" << endl;
-        return;
-    }
-    
-    string linea;
-    int contador = 0;
-    
     cout << "\n========== LISTA DE CLIENTES ==========" << endl;
     cout << "---------------------------------------" << endl;
     
-// Leer la primera línea de la tabla (las secciones)
-    getline(archivo, linea);
-    
-// Leer y mostrar cada cliente
-    while (getline(archivo, linea))
+    for (int i = 0; i < totalClientes; i++)
     {
-        stringstream ss(linea);
-        string nombre, dni, tipo, ingreso, estado, numCliente;
-        
-        getline(ss, nombre, ';');
-        getline(ss, dni, ';');
-        getline(ss, tipo, ';');
-        getline(ss, ingreso, ';');
-        getline(ss, estado, ';');
-        getline(ss, numCliente, ';');
-        
-        contador++;
-        cout << "Cliente #" << numCliente << " - " << nombre << " | DNI: " << dni << " | Tipo: " << tipo << " | Estado: " << estado << " | Año de Ingreso: " << ingreso << endl;
+        cout << "Cliente #" << numClientes[i] << " - " << nombres[i] 
+             << " | DNI: " << dnis[i] 
+             << " | Tipo: " << tipos[i] 
+             << " | Estado: " << estados[i] 
+             << " | Año de Ingreso: " << ingresos[i] << endl;
     }
     
     cout << "---------------------------------------" << endl;
-    cout << "Total de clientes: " << contador << endl;
+    cout << "Total de clientes: " << totalClientes << endl;
     cout << "========================================\n" << endl;
-    
-    archivo.close();
 }
 
-// Función para mostrar todos los detalles de un cliente específico por número
-void banco::mostrarDetallesCliente(int numCliente)
+// Función para mostrar todos los detalles de un cliente específico por número (desde memoria)
+void banco::mostrarDetallesCliente(string numCliente)
 {
-    ifstream archivo("Tabla de clientes.csv");
-    
-    if (!archivo.is_open())
+    if (numCliente.empty())
     {
-        cout << "Error: No se pudo abrir el archivo 'Tabla de clientes.csv'" << endl;
+        cout << "\nEl número de cliente no puede estar vacío." << endl;
         return;
     }
     
-    string linea;
     bool encontrado = false;
     
-    // Leer la primera línea (encabezado)
-    getline(archivo, linea);
-    
-    // Buscar el cliente por número
-    while (getline(archivo, linea))
+    for (int i = 0; i < totalClientes; i++)
     {
-        stringstream ss(linea);
-        string nombre, dni, tipo, ingreso, estado, numClienteStr;
-        
-        getline(ss, nombre, ';');
-        getline(ss, dni, ';');
-        getline(ss, tipo, ';');
-        getline(ss, ingreso, ';');
-        getline(ss, estado, ';');
-        getline(ss, numClienteStr, ';');
-        
-        if (stoi(numClienteStr) == numCliente)
+        if (numClientes[i] == numCliente)
         {
             encontrado = true;
             cout << "\n========== DETALLES DEL CLIENTE ==========" << endl;
-            cout << "Número de Cliente: " << numClienteStr << endl;
-            cout << "Nombre: " << nombre << endl;
-            cout << "DNI: " << dni << endl;
-            cout << "Tipo de Cliente: " << tipo << endl;
-            cout << "Año de Ingreso: " << ingreso << endl;
-            cout << "Estado: " << estado << endl;
+            cout << "Número de Cliente: " << numClientes[i] << endl;
+            cout << "Nombre: " << nombres[i] << endl;
+            cout << "DNI: " << dnis[i] << endl;
+            cout << "Tipo de Cliente: " << tipos[i] << endl;
+            cout << "Año de Ingreso: " << ingresos[i] << endl;
+            cout << "Estado: " << estados[i] << endl;
             cout << "==========================================\n" << endl;
             break;
         }
     }
     
     if (!encontrado)
-    {
         cout << "\nCliente #" << numCliente << " no encontrado." << endl;
-    }
-    
-    archivo.close();
 }
 
-// Función para cambiar el estado de un cliente (ACTIVO <-> BAJA)
-void banco::cambiarEstadoCliente(int numCliente)
+// Función para cambiar el estado de un cliente (ACTIVO <-> BAJA) desde memoria
+void banco::cambiarEstadoCliente(string numCliente)
 {
-    ifstream archivoEntrada("Tabla de clientes.csv");
-    
-    if (!archivoEntrada.is_open())
+    if (numCliente.empty())
     {
-        cout << "Error: No se pudo abrir el archivo 'Tabla de clientes.csv'" << endl;
+        cout << "\nEl número de cliente no puede estar vacío." << endl;
         return;
     }
     
-    vector<string> lineas;
-    string linea;
     bool encontrado = false;
     string nuevoEstado;
     string nombreCliente;
     
-    // Leer la primera línea (encabezado)
-    getline(archivoEntrada, linea);
-    lineas.push_back(linea);
-    
-    // Leer todas las líneas y modificar la correspondiente
-    while (getline(archivoEntrada, linea))
+    for (int i = 0; i < totalClientes; i++)
     {
-        stringstream ss(linea);
-        string nombre, dni, tipo, ingreso, estado, numClienteStr;
-        
-        getline(ss, nombre, ';');
-        getline(ss, dni, ';');
-        getline(ss, tipo, ';');
-        getline(ss, ingreso, ';');
-        getline(ss, estado, ';');
-        getline(ss, numClienteStr, ';');
-        
-        if (stoi(numClienteStr) == numCliente)
+        if (numClientes[i] == numCliente)
         {
             encontrado = true;
-            nombreCliente = nombre;
+            nombreCliente = nombres[i];
             
-            // Cambiar el estado
-            if (estado == "ACTIVO")
-            {
-                nuevoEstado = "BAJA";
-            }
-            else
-            {
-                nuevoEstado = "ACTIVO";
-            }
+            // Cambiar estado
+            nuevoEstado = (estados[i] == "ACTIVO") ? "BAJA" : "ACTIVO";
+            estados[i] = nuevoEstado;
             
-            // Reconstruir la línea con el nuevo estado
-            linea = nombre + ";" + dni + ";" + tipo + ";" + ingreso + ";" + nuevoEstado + ";" + numClienteStr;
+            // Guardar cambios en el archivo
+            guardarEnArchivo();
+            
+            cout << "\nEstado del cliente #" << numCliente << " (" << nombreCliente 
+                 << ") cambiado exitosamente a: " << nuevoEstado << endl;
+            break;
         }
-        
-        lineas.push_back(linea);
     }
-    
-    archivoEntrada.close();
     
     if (!encontrado)
-    {
         cout << "\nCliente #" << numCliente << " no encontrado." << endl;
-        return;
-    }
-    
-    // Escribir todas las líneas de vuelta al archivo
-    ofstream archivoSalida("Tabla de clientes.csv");
-    
-    if (!archivoSalida.is_open())
-    {
-        cout << "Error: No se pudo escribir en el archivo 'Tabla de clientes.csv'" << endl;
-        return;
-    }
-    
-    for (const string& l : lineas)
-    {
-        archivoSalida << l << endl;
-    }
-    
-    archivoSalida.close();
-    
-    cout << "\nEstado del cliente #" << numCliente << " (" << nombreCliente << ") cambiado exitosamente a: " << nuevoEstado << endl;
 }
 
