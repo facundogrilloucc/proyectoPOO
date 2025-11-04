@@ -32,30 +32,30 @@ public:
 class persona
 {
 private:
-    long dni;
+    string dni;
     string nombre;
-    int anio_ingreso;
+    string anio_ingreso;
 
 public:
     persona();
-    persona(long, string, int);
-    void setDNI(long);
-    long getDNI();
+    persona(string, string, string);
+    void setDNI(string);
+    string getDNI();
     void setNombre(string);
     string getNombre();
-    void setAnioIngreso(int);
-    int getAnioIngreso();
+    void setAnioIngreso(string);
+    string getAnioIngreso();
     virtual void mostrar_datos();
 };
 
 struct archivo_clientes
 {
     string Nombre;
-    long DNI;
+    string DNI;
     string Tipo;
-    int Ingreso;
+    string Ingreso;
     string Estado;
-    int NumCliente;
+    string NumCliente;
 };
 
 class cliente : public persona
@@ -63,16 +63,16 @@ class cliente : public persona
 private:
     string tipo_cliente;
     string estado_cliente;
-    long numero_cliente;
+    string numero_cliente;
 public:
     cliente();
-    cliente(long, string, int, string, string , long);
+    cliente(string, string, string, string, string, string);
     void setTipoCliente(string);
     string getTipoCliente();
     void setEstadoCliente(string);
     string getEstadoCliente();
-    void setNumeroCliente(long);
-    long getNumeroCliente();
+    void setNumeroCliente(string);
+    string getNumeroCliente();
     void mostrar_datos();
 };
 
@@ -83,7 +83,7 @@ private:
 
 public:
     personal();
-    personal(long, string, int, string);
+    personal(string, string, string, string);
     void setAreaTrabajo(string);
     string getAreaTrabajo();
     void mostrar_datos();
@@ -94,30 +94,21 @@ class banco
 private:
     string nombre_banco;
     archivo_clientes lista_clientes;
-    cliente cl;
     personal pr;
     
-    // Arreglos dinámicos para almacenar clientes en memoria
-    string* nombres;
-    string* dnis;
-    string* tipos;
-    string* ingresos;
-    string* estados;
-    string* numClientes;
+    cliente* clientes;
     int totalClientes;
     int capacidad;
     
 public:
     banco();
-    banco(string, archivo_clientes, cliente, personal);
+    banco(string, archivo_clientes, personal);
     ~banco();  // Destructor para liberar memoria
     
     void setNombreBanco(string);
     string getNombreBanco();
     void setArchivoClientes(archivo_clientes);
     archivo_clientes getArchivoClientes();
-    void setCliente(cliente);
-    cliente getCliente();
     void setPersonal(personal);
     personal getPersonal();
     void mostrar_datos();
@@ -126,7 +117,7 @@ public:
     void cargarDesdeArchivo();
     void guardarEnArchivo();
     
-    // Funciones de gestión de clientes (ahora usan arreglos en memoria)
+    // Funciones de gestión de clientes (usando POO)
     void mostrarListaClientes();
     void mostrarDetallesCliente(string numCliente);
     void cambiarEstadoCliente(string numCliente);
