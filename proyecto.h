@@ -58,6 +58,71 @@ struct archivo_clientes
     string NumCliente;
 };
 
+struct archivo_transacciones
+{
+    string NumCliente;
+    string anio;
+    string mes;
+    string dia;
+    string TipoTransaccion;
+    string TipoMoneda;
+    string Monto;
+};
+
+class transaciones {
+    private:
+        archivo_transacciones transaccion;
+        // Arreglo en memoria para todas las transacciones (seguimos el patrón de `banco`)
+        archivo_transacciones* transacciones;
+        int totalTransacciones;
+        int capacidadTransacciones;
+    public: 
+        // Destructor para liberar memoria interna si corresponde
+        ~transaciones();
+
+        // Setters / Getters para la transaccion actual (transaccion)
+        void setNumCliente(const string&);
+        string getNumCliente() const;
+        void setAnio(const string&);
+        string getAnio() const;
+        void setMes(const string&);
+        string getMes() const;
+        void setDia(const string&);
+        string getDia() const;
+        void setTipoTransaccion(const string&);
+        string getTipoTransaccion() const;
+        void setTipoMoneda(const string&);
+        string getTipoMoneda() const;
+        void setMonto(const string&);
+        string getMonto() const;
+    transaciones();
+    transaciones(archivo_transacciones);
+    void setTransaccion(const archivo_transacciones&);
+    archivo_transacciones getTransaccion();
+        void registrar_transaccion();
+        void mostrar_transaccion_cliente();
+        void mostrar_transacciones();
+        void transacciones_anio();
+        void transacciones_mes();
+        // Nuevos métodos para cargar/guardar todas las transacciones en memoria
+        void cargarTransaccionesDesdeArchivo();
+        void guardarTransaccionesEnArchivo();
+};
+
+class caja_de_ahorro : public transaciones{
+    private:
+        float saldodolares;
+        float saldopesos;
+    public:
+        caja_de_ahorro();
+        caja_de_ahorro(archivo_transacciones, float, float);
+        void setSaldoDolares(float);
+        float getSaldoDolares();
+        void setSaldoPesos(float);
+        float getSaldoPesos();
+        void mostrar_saldo();
+};
+
 class cliente : public persona
 {
 private:

@@ -336,8 +336,7 @@ void banco::cambiarEstadoCliente(string numCliente)
             string nombreCliente = clientes[i].getNombre();
             string estadoActual = clientes[i].getEstadoCliente();
             
-            string nuevoEstado = (estadoActual == "ACTIVO") ? "BAJA" : "ACTIVO";
-            clientes[i].setEstadoCliente(nuevoEstado);
+            string nuevoEstado = (estadoActual == "ACTIVO") ? "BAJA" : "ACTIVO"; clientes[i].setEstadoCliente(nuevoEstado);
          
             guardarEnArchivo();
             
@@ -348,5 +347,430 @@ void banco::cambiarEstadoCliente(string numCliente)
     
     if (!encontrado)
         cout << "\nCliente #" << numCliente << " no encontrado." << endl;
+}
+
+// Implementación de la clase transaciones
+transaciones::transaciones()
+{
+    // transaccion es un objeto por valor
+    transacciones = nullptr;
+    totalTransacciones = 0;
+    capacidadTransacciones = 0;
+}
+
+// Destructor: liberar solo el arreglo dinámico
+transaciones::~transaciones()
+{
+    if (transacciones != nullptr)
+        delete[] transacciones;
+}
+
+transaciones::transaciones(archivo_transacciones _transaccion)
+{
+    transaccion = _transaccion;
+    transacciones = nullptr;
+    totalTransacciones = 0;
+    capacidadTransacciones = 0;
+}
+
+void transaciones::setTransaccion(const archivo_transacciones& _transaccion)
+{
+    transaccion = _transaccion;
+}
+
+archivo_transacciones transaciones::getTransaccion()
+{
+    return transaccion;
+}
+
+// Cargar todas las transacciones desde 'transacciones.txt' al arreglo en memoria
+void transaciones::cargarTransaccionesDesdeArchivo()
+{
+    // Liberar arreglo previo si existe
+    if (transacciones != nullptr)
+    {
+        delete[] transacciones;
+        transacciones = nullptr;
+        totalTransacciones = 0;
+        capacidadTransacciones = 0;
+    }
+
+    ifstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        // No existe archivo: dejamos arreglo vacío
+        return;
+    }
+
+    // Inicializar con capacidad base
+    capacidadTransacciones = 10;
+    transacciones = new archivo_transacciones[capacidadTransacciones];
+    totalTransacciones = 0;
+
+    while (true)
+    {
+        archivo_transacciones at;
+        if (!getline(archivo, at.NumCliente)) break;
+        if (!getline(archivo, at.anio)) break;
+        if (!getline(archivo, at.mes)) break;
+        if (!getline(archivo, at.dia)) break;
+        if (!getline(archivo, at.TipoTransaccion)) break;
+        if (!getline(archivo, at.TipoMoneda)) break;
+        if (!getline(archivo, at.Monto)) break;
+
+        // Redimensionar si es necesario
+        if (totalTransacciones >= capacidadTransacciones)
+        {
+            int nuevaCap = capacidadTransacciones * 2;
+            archivo_transacciones* nuevos = new archivo_transacciones[nuevaCap];
+            for (int i = 0; i < totalTransacciones; i++)
+                nuevos[i] = transacciones[i];
+            delete[] transacciones;
+            transacciones = nuevos;
+            capacidadTransacciones = nuevaCap;
+        }
+
+        transacciones[totalTransacciones++] = at;
+    }
+
+    archivo.close();
+}
+
+// Guardar todas las transacciones desde el arreglo en memoria a 'transacciones.txt' (sobrescribe)
+void transaciones::guardarTransaccionesEnArchivo()
+{
+    ofstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        cerr << "No se pudo abrir 'transacciones.txt' para escritura" << endl;
+        return;
+    }
+
+    for (int i = 0; i < totalTransacciones; i++)
+    {
+        archivo << transacciones[i].NumCliente << endl
+                << transacciones[i].anio << endl
+                << transacciones[i].mes << endl
+                << transacciones[i].dia << endl
+                << transacciones[i].TipoTransaccion << endl
+                << transacciones[i].TipoMoneda << endl
+                << transacciones[i].Monto << endl;
+    }
+
+    archivo.close();
+}
+
+// Setters / Getters sencillos, operan sobre el miembro por valor
+void transaciones::setNumCliente(const string& v)
+{
+    transaccion.NumCliente = v;
+}
+
+string transaciones::getNumCliente() const
+{
+    return transaccion.NumCliente;
+}
+
+void transaciones::setAnio(const string& v)
+{
+    transaccion.anio = v;
+}
+
+string transaciones::getAnio() const
+{
+    return transaccion.anio;
+}
+
+void transaciones::setMes(const string& v)
+{
+    transaccion.mes = v;
+}
+
+string transaciones::getMes() const
+{
+    return transaccion.mes;
+}
+
+void transaciones::setDia(const string& v)
+{
+    transaccion.dia = v;
+}
+
+string transaciones::getDia() const
+{
+    return transaccion.dia;
+}
+
+void transaciones::setTipoTransaccion(const string& v)
+{
+    transaccion.TipoTransaccion = v;
+}
+
+string transaciones::getTipoTransaccion() const
+{
+    return transaccion.TipoTransaccion;
+}
+
+void transaciones::setTipoMoneda(const string& v)
+{
+    transaccion.TipoMoneda = v;
+}
+
+string transaciones::getTipoMoneda() const
+{
+    return transaccion.TipoMoneda;
+}
+
+void transaciones::setMonto(const string& v)
+{
+    transaccion.Monto = v;
+}
+
+string transaciones::getMonto() const
+{
+    return transaccion.Monto;
+}
+
+// Registrar una transaccion: simple append a 'transacciones.txt'
+void transaciones::registrar_transaccion()
+{
+    try
+    {
+        archivo_transacciones at;
+
+        cout << "Ingrese numero de cliente: ";
+        cin >> at.NumCliente;
+        cout << "Ingrese anio (YYYY): "; 
+        cin >> at.anio;
+        cout << "Ingrese mes (MM o numero): "; 
+        cin >> at.mes;
+        cout << "Ingrese dia (DD): "; 
+        cin >> at.dia;
+        cout << "Tipo de transaccion (EXTRACCION/DEPOSITO): "; 
+        cin >> at.TipoTransaccion;
+        cout << "Tipo de moneda (USD/ARS): "; 
+        cin >> at.TipoMoneda;
+        cout << "Monto: "; 
+        cin >> at.Monto;
+
+        // Cargar todas las transacciones en memoria, anexar la nueva y guardar todo (sin append)
+        cargarTransaccionesDesdeArchivo();
+
+        // Asegurar espacio
+        if (transacciones == nullptr)
+        {
+            capacidadTransacciones = 10;
+            transacciones = new archivo_transacciones[capacidadTransacciones];
+            totalTransacciones = 0;
+        }
+
+        if (totalTransacciones >= capacidadTransacciones)
+        {
+            int nuevaCap = (capacidadTransacciones == 0) ? 10 : capacidadTransacciones * 2;
+            archivo_transacciones* nuevos = new archivo_transacciones[nuevaCap];
+            for (int i = 0; i < totalTransacciones; i++)
+                nuevos[i] = transacciones[i];
+            delete[] transacciones;
+            transacciones = nuevos;
+            capacidadTransacciones = nuevaCap;
+        }
+
+        transacciones[totalTransacciones++] = at;
+
+        // Guardar todo de nuevo en el archivo (sobrescribir)
+        guardarTransaccionesEnArchivo();
+
+        cout << "Transaccion registrada correctamente." << endl;
+    }
+    catch (const ExcepcionArgumentoInvalido& e)
+    {
+        cerr << "Error al registrar transaccion: " << e.what() << endl;
+    }
+}
+
+// Mostrar transacciones de un cliente (pide numero de cliente por consola)
+void transaciones::mostrar_transaccion_cliente()
+{
+    string numCliente;
+    cout << "Ingrese numero de cliente a listar transacciones: ";
+    cin >> numCliente;
+
+    ifstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        cout << "No existe el archivo 'transacciones.txt' o no se puede abrir." << endl;
+        return;
+    }
+
+    bool any = false;
+    while (true)
+    {
+        archivo_transacciones at;
+        if (!getline(archivo, at.NumCliente)) break;
+        if (!getline(archivo, at.anio)) break;
+        if (!getline(archivo, at.mes)) break;
+        if (!getline(archivo, at.dia)) break;
+        if (!getline(archivo, at.TipoTransaccion)) break;
+        if (!getline(archivo, at.TipoMoneda)) break;
+        if (!getline(archivo, at.Monto)) break;
+
+        if (at.NumCliente == numCliente)
+        {
+            any = true;
+            cout << "Cliente: " << at.NumCliente << " | Fecha: " << at.dia << "/" << at.mes << "/" << at.anio
+                 << " | Tipo: " << at.TipoTransaccion << " | Moneda: " << at.TipoMoneda << " | Monto: " << at.Monto << endl;
+        }
+    }
+
+    if (!any) cout << "No se encontraron transacciones para el cliente " << numCliente << "." << endl;
+
+    archivo.close();
+}
+
+// Mostrar todas las transacciones
+void transaciones::mostrar_transacciones()
+{
+    ifstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        cout << "No existe el archivo 'transacciones.txt' o no se puede abrir." << endl;
+        return;
+    }
+
+    cout << "\n===== LISTADO DE TRANSACCIONES =====" << endl;
+    while (true)
+    {
+        archivo_transacciones at;
+        if (!getline(archivo, at.NumCliente)) break;
+        if (!getline(archivo, at.anio)) break;
+        if (!getline(archivo, at.mes)) break;
+        if (!getline(archivo, at.dia)) break;
+        if (!getline(archivo, at.TipoTransaccion)) break;
+        if (!getline(archivo, at.TipoMoneda)) break;
+        if (!getline(archivo, at.Monto)) break;
+
+        cout << "Cliente: " << at.NumCliente << " | Fecha: " << at.dia << "/" << at.mes << "/" << at.anio
+             << " | Tipo: " << at.TipoTransaccion << " | Moneda: " << at.TipoMoneda << " | Monto: " << at.Monto << endl;
+    }
+
+    archivo.close();
+}
+
+// Informes por anio
+void transaciones::transacciones_anio()
+{
+    string anio;
+    cout << "Ingrese anio a filtrar (YYYY): "; cin >> anio;
+
+    ifstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        cout << "No existe el archivo 'transacciones.txt' o no se puede abrir." << endl;
+        return;
+    }
+
+    bool any = false;
+    cout << "\n===== TRANSACCIONES AÑO " << anio << " =====" << endl;
+    while (true)
+    {
+        archivo_transacciones at;
+        if (!getline(archivo, at.NumCliente)) break;
+        if (!getline(archivo, at.anio)) break;
+        if (!getline(archivo, at.mes)) break;
+        if (!getline(archivo, at.dia)) break;
+        if (!getline(archivo, at.TipoTransaccion)) break;
+        if (!getline(archivo, at.TipoMoneda)) break;
+        if (!getline(archivo, at.Monto)) break;
+
+        if (at.anio == anio)
+        {
+            any = true;
+            cout << "Cliente: " << at.NumCliente << " | Fecha: " << at.dia << "/" << at.mes << "/" << at.anio
+                 << " | Tipo: " << at.TipoTransaccion << " | Moneda: " << at.TipoMoneda << " | Monto: " << at.Monto << endl;
+        }
+    }
+
+    if (!any) cout << "No se encontraron transacciones para el año " << anio << "." << endl;
+
+    archivo.close();
+}
+
+// Informes por mes (pide año y mes)
+void transaciones::transacciones_mes()
+{
+    string anio, mes;
+    cout << "Ingrese anio (YYYY): "; cin >> anio;
+    cout << "Ingrese mes (MM o numero): "; cin >> mes;
+
+    ifstream archivo("transacciones.txt");
+    if (!archivo.is_open())
+    {
+        cout << "No existe el archivo 'transacciones.txt' o no se puede abrir." << endl;
+        return;
+    }
+
+    bool any = false;
+    cout << "\n===== TRANSACCIONES " << mes << "/" << anio << " =====" << endl;
+    while (true)
+    {
+        archivo_transacciones at;
+        if (!getline(archivo, at.NumCliente)) break;
+        if (!getline(archivo, at.anio)) break;
+        if (!getline(archivo, at.mes)) break;
+        if (!getline(archivo, at.dia)) break;
+        if (!getline(archivo, at.TipoTransaccion)) break;
+        if (!getline(archivo, at.TipoMoneda)) break;
+        if (!getline(archivo, at.Monto)) break;
+
+        if (at.anio == anio && at.mes == mes)
+        {
+            any = true;
+            cout << "Cliente: " << at.NumCliente << " | Fecha: " << at.dia << "/" << at.mes << "/" << at.anio
+                 << " | Tipo: " << at.TipoTransaccion << " | Moneda: " << at.TipoMoneda << " | Monto: " << at.Monto << endl;
+        }
+    }
+
+    if (!any) cout << "No se encontraron transacciones para " << mes << "/" << anio << "." << endl;
+
+    archivo.close();
+}
+
+// Implementación de caja_de_ahorro
+caja_de_ahorro::caja_de_ahorro()
+{
+    saldodolares = 0.0f;
+    saldopesos = 0.0f;
+}
+
+caja_de_ahorro::caja_de_ahorro(archivo_transacciones at, float dolares, float pesos)
+{
+    // Por ahora solo usamos los saldos; el archivo_transacciones recibido no se almacena internamente
+    saldodolares = dolares;
+    saldopesos = pesos;
+}
+
+void caja_de_ahorro::setSaldoDolares(float s)
+{
+    saldodolares = s;
+}
+
+float caja_de_ahorro::getSaldoDolares()
+{
+    return saldodolares;
+}
+
+void caja_de_ahorro::setSaldoPesos(float s)
+{
+    saldopesos = s;
+}
+
+float caja_de_ahorro::getSaldoPesos()
+{
+    return saldopesos;
+}
+
+void caja_de_ahorro::mostrar_saldo()
+{
+    cout << "Saldo en USD: " << saldodolares << " | Saldo en ARS: " << saldopesos << endl;
 }
 

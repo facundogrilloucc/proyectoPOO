@@ -3,6 +3,7 @@
 int main()
 {
     banco miBanco;
+    transaciones gestorTrans;
     int opcion;
     string numCliente;
     
@@ -18,6 +19,11 @@ int main()
             cout << "1. Mostrar lista de clientes" << endl;
             cout << "2. Ver detalles de un cliente" << endl;
             cout << "3. Cambiar estado de un cliente" << endl;
+            cout << "4. Registrar transaccion" << endl;
+            cout << "5. Listar transacciones por cliente" << endl;
+            cout << "6. Listar todas las transacciones" << endl;
+            cout << "7. Informes por año" << endl;
+            cout << "8. Informes por mes" << endl;
             cout << "0. Salir" << endl;
             cout << "====================================" << endl;
             cout << "Ingrese una opcion: ";
@@ -59,6 +65,33 @@ int main()
                     {
                         cerr << "Error: " << e.what() << endl;
                     }
+                    break;
+
+                case 4:
+                    try
+                    {
+                        gestorTrans.registrar_transaccion();
+                    }
+                    catch (const Excepcion& e)
+                    {
+                        cerr << "Error al registrar transaccion: " << e.what() << endl;
+                    }
+                    break;
+
+                case 5:
+                    gestorTrans.mostrar_transaccion_cliente();
+                    break;
+
+                case 6:
+                    gestorTrans.mostrar_transacciones();
+                    break;
+
+                case 7:
+                    gestorTrans.transacciones_anio();
+                    break;
+
+                case 8:
+                    gestorTrans.transacciones_mes();
                     break;
                     
                 case 0:
