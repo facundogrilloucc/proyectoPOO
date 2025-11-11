@@ -5,6 +5,7 @@ using namespace std;
 
 int convertirAEntero(string entrada);
 long convertirALong(string entrada);
+float convertirAFloat(string entrada);
 
 // Clases de excepciones (ArgumentoInvalido y Memoria)
 class Excepcion
@@ -73,7 +74,7 @@ struct archivo_transacciones
 };
 
 class transaciones {
-    private:
+    protected:
         archivo_transacciones transaccion;
         // Arreglo en memoria para todas las transacciones (seguimos el patrón de `banco`)
         archivo_transacciones* transacciones;
@@ -102,7 +103,6 @@ class transaciones {
     transaciones(archivo_transacciones);
     void setTransaccion(const archivo_transacciones&);
     archivo_transacciones getTransaccion();
-        void registrar_transaccion();
         void mostrar_transaccion_cliente();
         void mostrar_transacciones();
         void transacciones_anio();
@@ -124,6 +124,9 @@ class caja_de_ahorro : public transaciones{
         void setSaldoPesos(float);
         float getSaldoPesos();
         void mostrar_saldo();
+        // Métodos específicos de caja de ahorro
+        void calcular_saldo_cliente(string numCliente);
+        void registrar_transaccion(); // Override con validación de saldo
 };
 
 class cliente : public persona
@@ -142,6 +145,7 @@ public:
     void setNumeroCliente(string);
     string getNumeroCliente();
     void mostrar_datos();
+    void mostrar_info_tarjeta_credito();
 };
 
 class personal : public persona

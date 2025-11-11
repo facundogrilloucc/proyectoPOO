@@ -3,7 +3,7 @@
 int main()
 {
     banco miBanco;
-    transaciones gestorTrans;
+    caja_de_ahorro cajaAhorro;  // Cambio: usar caja_de_ahorro en vez de transaciones
     int opcion;
     string numCliente;
     
@@ -20,10 +20,11 @@ int main()
             cout << "2. Ver detalles de un cliente" << endl;
             cout << "3. Cambiar estado de un cliente" << endl;
             cout << "4. Registrar transaccion" << endl;
-            cout << "5. Listar transacciones por cliente" << endl;
-            cout << "6. Listar todas las transacciones" << endl;
-            cout << "7. Informes por año" << endl;
-            cout << "8. Informes por mes" << endl;
+            cout << "5. Consultar saldo de un cliente" << endl;
+            cout << "6. Listar transacciones por cliente" << endl;
+            cout << "7. Listar todas las transacciones" << endl;
+            cout << "8. Informes por año" << endl;
+            cout << "9. Informes por mes" << endl;
             cout << "0. Salir" << endl;
             cout << "====================================" << endl;
             cout << "Ingrese una opcion: ";
@@ -70,28 +71,43 @@ int main()
                 case 4:
                     try
                     {
-                        gestorTrans.registrar_transaccion();
+                        cajaAhorro.registrar_transaccion();  // Usa caja_de_ahorro con validación
                     }
                     catch (const Excepcion& e)
                     {
-                        cerr << "Error al registrar transaccion: " << e.what() << endl;
+                        cerr << "Error al registrar transaccion: " << e.error() << endl;
                     }
                     break;
 
                 case 5:
-                    gestorTrans.mostrar_transaccion_cliente();
+                    try
+                    {
+                        cout << "\nIngrese numero de cliente para consultar saldo: ";
+                        cin >> numCliente;
+                        cajaAhorro.calcular_saldo_cliente(numCliente);
+                        cout << "\n===== SALDO CLIENTE #" << numCliente << " =====" << endl;
+                        cajaAhorro.mostrar_saldo();
+                    }
+                    catch (const Excepcion& e)
+                    {
+                        cerr << "Error: " << e.error() << endl;
+                    }
                     break;
 
                 case 6:
-                    gestorTrans.mostrar_transacciones();
+                    cajaAhorro.mostrar_transaccion_cliente();
                     break;
 
                 case 7:
-                    gestorTrans.transacciones_anio();
+                    cajaAhorro.mostrar_transacciones();
                     break;
 
                 case 8:
-                    gestorTrans.transacciones_mes();
+                    cajaAhorro.transacciones_anio();
+                    break;
+
+                case 9:
+                    cajaAhorro.transacciones_mes();
                     break;
                     
                 case 0:
