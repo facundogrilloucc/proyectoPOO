@@ -4,28 +4,34 @@ Se han creado los siguientes archivos para facilitar la ejecución del programa:
 
 ## ✅ Archivos Creados
 
-### 1. `run.sh` (Linux/Mac) ⚡
-- **Qué hace:** Compila y ejecuta el programa automáticamente
+### 1. `run.sh` (Linux/Mac) ⚡ - UNIFICADO
+- **Qué hace:** Script inteligente que se adapta al contexto de ejecución
+  - **Desde terminal:** Compila y ejecuta directamente
+  - **Con doble clic:** Abre una nueva terminal automáticamente
 - **Cómo usar:** 
   - Terminal: `./run.sh`
-  - Explorador: Doble clic (puede requerir "Ejecutar en terminal")
+  - Explorador: Doble clic
+- **Ventajas:**
+  - Detecta automáticamente el emulador de terminal (gnome-terminal, konsole, xterm, xfce4-terminal)
+  - Funciona en cualquier situación
+  - Un solo archivo para todo
 - **Estado:** ✅ Permisos de ejecución otorgados
 
-### 2. `run.bat` (Windows) 🪟
+### 2. `programa.bat` (Windows) 🪟
 - **Qué hace:** Compila y ejecuta el programa automáticamente
 - **Cómo usar:**
-  - CMD: `run.bat`
+  - CMD: `programa.bat`
   - Explorador: Doble clic
 - **Estado:** ✅ Listo para usar
 
 ### 3. `SistemaBancario.desktop` (Linux) 🐧
 - **Qué hace:** Lanzador de aplicación para Linux
 - **Cómo usar:** Doble clic desde el explorador de archivos
-- **Ventaja:** Se abre en una nueva terminal
+- **Ventaja:** Integración con el escritorio Linux
 - **Estado:** ✅ Permisos de ejecución otorgados
 
 ### 4. `INSTRUCCIONES.md` 📖
-- **Qué contiene:** Guía rápida de ejecución
+- **Qué contiene:** Guía rápida de ejecución actualizada
 - **Incluye:** Solución de problemas comunes
 - **Para quién:** Usuarios que necesitan empezar rápido
 
@@ -33,50 +39,201 @@ Se han creado los siguientes archivos para facilitar la ejecución del programa:
 
 ### **Linux (Fedora)**
 ```bash
-# Opción más fácil:
+# La forma más fácil y versátil:
 ./run.sh
 
-# O doble clic en:
-SistemaBancario.desktop
+# O doble clic en cualquiera de estos:
+- run.sh
+- SistemaBancario.desktop
 ```
 
 ### **Windows**
 ```cmd
 # Doble clic en:
-run.bat
+programa.bat
 ```
 
-## 📝 Características de los Scripts
+## 📝 Características del Script Unificado run.sh
 
+✅ **Detección inteligente** del contexto de ejecución  
 ✅ **Compilación automática** antes de ejecutar  
 ✅ **Verificación de errores** de compilación  
 ✅ **Mensajes informativos** durante el proceso  
 ✅ **Pausa al finalizar** para ver resultados  
 ✅ **Encabezado visual** del programa  
-✅ **Compatible** con rutas con espacios  
+✅ **Detección automática** del emulador de terminal disponible  
+✅ **Funciona desde terminal Y con doble clic**  
 
-## 🔧 Personalización
+## 🔧 Mejoras de la Versión Unificada
 
-Si necesitas modificar algo:
+**Antes:** Se necesitaban dos scripts (`run.sh` y `lanzar.sh`)  
+**Ahora:** Un solo script (`run.sh`) que hace todo
 
-### `run.sh`
-- Cambiar compilador: Edita la línea `g++ -std=c++11...`
-- Cambiar nombre del ejecutable: Cambia `-o app` por `-o tu_nombre`
-
-### `run.bat`
-- Similar a run.sh, pero sintaxis de Windows
-- Usar `REM` para comentarios
-
-### `SistemaBancario.desktop`
-- Cambiar icono: Edita `Icon=utilities-terminal`
-- Cambiar nombre: Edita `Name=Sistema Bancario`
+**Beneficios:**
+- ✓ Menos archivos que mantener
+- ✓ Comportamiento inteligente según el contexto
+- ✓ Más fácil de entender y usar
+- ✓ Compatible con todos los métodos de ejecución
 
 ## ✅ Estado Final
 
 Todos los archivos están creados y funcionando correctamente:
+- ✓ Script unificado con detección inteligente
 - ✓ Scripts tienen permisos de ejecución
 - ✓ README.md actualizado con instrucciones
-- ✓ INSTRUCCIONES.md creado para referencia rápida
+- ✓ INSTRUCCIONES.md actualizado
 - ✓ Compatible con Linux, Mac y Windows
 
-**¡Todo listo para ejecutar el programa con un simple doble clic!** 🚀
+**¡Todo listo para ejecutar el programa de la forma que prefieras!** 🚀
+
+
+# 🔧 Solución para Archivo .desktop en Linux
+
+## ❌ Problema Identificado
+
+El archivo `SistemaBancario.desktop` original tenía varios problemas:
+1. Usaba `%d` que no es válido en archivos .desktop
+2. La sintaxis de `Exec` no era compatible con todos los entornos de escritorio
+3. No estaba marcado como "confiable" (requerido en GNOME/Fedora)
+
+## ✅ Solución Implementada
+
+### Archivos Creados:
+
+#### 1. `lanzar.sh` (Nuevo Launcher Universal)
+- **Propósito:** Script que detecta y usa el emulador de terminal disponible
+- **Compatible con:**
+  - gnome-terminal (GNOME/Fedora)
+  - konsole (KDE)
+  - xterm (Genérico)
+  - xfce4-terminal (XFCE)
+  - Terminal actual (fallback)
+
+#### 2. `SistemaBancario.desktop` (Actualizado)
+- **Cambio principal:** Ahora llama a `lanzar.sh` en lugar de `run.sh` directamente
+- **Terminal:** Cambiado a `false` (el launcher abre su propia terminal)
+- **Marcado como confiable:** Usando comando `gio`
+
+## 🚀 Opciones de Ejecución (En Orden de Facilidad)
+
+### **Opción 1: Script lanzar.sh (MÁS FÁCIL)** ⭐
+```bash
+./lanzar.sh
+```
+O **doble clic** en `lanzar.sh` desde el explorador de archivos
+
+**Ventajas:**
+- ✅ Abre una nueva terminal automáticamente
+- ✅ Funciona en todos los entornos de escritorio Linux
+- ✅ No requiere configuración adicional
+
+### **Opción 2: Script run.sh (Tradicional)**
+```bash
+./run.sh
+```
+O desde el explorador **clic derecho → "Ejecutar en terminal"**
+
+**Ventajas:**
+- ✅ Usa la terminal actual
+- ✅ Más simple
+
+### **Opción 3: Archivo .desktop (Para Escritorio)**
+**Doble clic** en `SistemaBancario.desktop`
+
+**Si no funciona:**
+1. **Marcar como confiable:**
+   ```bash
+   gio set SistemaBancario.desktop metadata::trusted true
+   chmod +x SistemaBancario.desktop
+   ```
+
+2. **Permitir lanzamiento** (en GNOME):
+   - Clic derecho en el archivo
+   - "Permitir lanzar" o "Allow Launching"
+
+3. **Verificar permisos:**
+   ```bash
+   ls -la SistemaBancario.desktop
+   # Debe mostrar: -rwxr-xr-x
+   ```
+
+## 🔍 Diagnóstico de Problemas
+
+### El .desktop no hace nada al hacer doble clic:
+
+**Solución:**
+```bash
+# 1. Dar permisos
+chmod +x SistemaBancario.desktop
+chmod +x lanzar.sh
+chmod +x run.sh
+
+# 2. Marcar como confiable
+gio set SistemaBancario.desktop metadata::trusted true
+
+# 3. Verificar que funciona desde terminal
+./lanzar.sh
+```
+
+### El .desktop pide "confiar" o "trust":
+- Es normal en GNOME/Fedora
+- Haz clic en "Trust and Launch" / "Confiar y Ejecutar"
+- Esto solo pasa la primera vez
+
+### Ninguna terminal se abre:
+**Verifica que tienes un emulador de terminal:**
+```bash
+which gnome-terminal konsole xterm xfce4-terminal
+```
+
+Si ninguno está instalado:
+```bash
+# Fedora
+sudo dnf install gnome-terminal
+
+# Ubuntu/Debian
+sudo apt install gnome-terminal
+```
+
+## 📝 Resumen de Archivos
+
+| Archivo | Propósito | Uso |
+|---------|-----------|-----|
+| `run.sh` | Compila y ejecuta en terminal actual | `./run.sh` |
+| `lanzar.sh` | Abre nueva terminal y ejecuta | `./lanzar.sh` (RECOMENDADO) |
+| `SistemaBancario.desktop` | Lanzador gráfico | Doble clic |
+| `run.bat` | Para Windows | Doble clic (Windows) |
+
+## ✅ Recomendación Final
+
+**Para uso diario en Linux:**
+```bash
+./lanzar.sh
+```
+
+**Para debugging/desarrollo:**
+```bash
+./run.sh
+```
+
+**Para acceso rápido desde escritorio:**
+- Copia `SistemaBancario.desktop` a `~/Desktop/`
+- O crea un acceso directo a `lanzar.sh`
+
+---
+
+## 🎯 Ejemplo de Uso Típico
+
+```bash
+# Navegar al proyecto
+cd ~/Documentos/PROYECTO/proyectoPOO
+
+# Ejecutar (abre nueva terminal automáticamente)
+./lanzar.sh
+```
+
+**¡Y listo!** El programa se compilará y ejecutará en una nueva terminal 🚀
+
+---
+
+**Nota:** Si sigues teniendo problemas, usa siempre `./lanzar.sh` que es la forma más confiable y compatible.

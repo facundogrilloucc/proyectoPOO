@@ -2,25 +2,36 @@
 
 ## Linux / Mac
 
-### Opción 1: Doble clic (más fácil)
-1. Busca el archivo `SistemaBancario.desktop`
-2. Haz doble clic
-3. Si te pregunta, selecciona "Ejecutar" o "Confiar y Ejecutar"
-
-### Opción 2: Terminal
+### Opción 1: Script run.sh (MÁS FÁCIL) ⭐
 ```bash
 ./run.sh
+```
+O **doble clic** en `run.sh` desde el explorador de archivos
+
+**Ventajas:**
+- ✅ Funciona desde terminal (ejecuta directamente)
+- ✅ Funciona con doble clic (abre nueva terminal automáticamente)
+- ✅ Detecta automáticamente el emulador de terminal disponible
+- ✅ No requiere configuración adicional
+
+### Opción 2: Lanzador Gráfico
+**Doble clic** en `SistemaBancario.desktop`
+
+**Si pide confiar:**
+```bash
+gio set SistemaBancario.desktop metadata::trusted true
+chmod +x SistemaBancario.desktop
 ```
 
 ## Windows
 
 ### Opción 1: Doble clic (más fácil)
-1. Busca el archivo `run.bat`
+1. Busca el archivo `programa.bat`
 2. Haz doble clic
 
 ### Opción 2: CMD/PowerShell
 ```cmd
-run.bat
+programa.bat
 ```
 
 ---
@@ -78,3 +89,4 @@ chmod +x SistemaBancario.desktop
 ---
 
 Para más información detallada, consulta `README.md`
+

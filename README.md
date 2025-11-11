@@ -664,32 +664,41 @@ Línea 7: Monto
 
 ## 🛠️ Compilación y Ejecución
 
-### Método 1: Scripts de Ejecución Automática (Recomendado)
+### Método Recomendado: Script Unificado
 
 #### En Linux/Mac
 ```bash
 ./run.sh
 ```
-Este script:
-- Compila automáticamente el proyecto
-- Ejecuta el programa si la compilación es exitosa
+**O doble clic en `run.sh`** desde el explorador de archivos.
+
+Este script inteligente:
+- **Desde terminal:** Compila y ejecuta directamente
+- **Con doble clic:** Abre automáticamente una nueva terminal
+- Detecta automáticamente el emulador de terminal disponible (gnome-terminal, konsole, xterm, xfce4-terminal)
 - Muestra un encabezado de bienvenida
-- Pausa la terminal al finalizar
+- Pausa al finalizar para ver resultados
 
 #### En Windows
-Doble clic en `run.bat` o desde CMD:
+Doble clic en `programa.bat` o desde CMD:
 ```cmd
-run.bat
+programa.bat
 ```
-Este script:
-- Compila automáticamente el proyecto
-- Ejecuta el programa si la compilación es exitosa
-- Muestra un encabezado de bienvenida
-- Pausa la terminal al finalizar
 
 ---
 
-### Método 2: Compilación Manual
+### Método Alternativo: Lanzador Gráfico (Linux)
+
+Doble clic en `SistemaBancario.desktop`
+
+**Si pide confiar la primera vez:**
+```bash
+gio set SistemaBancario.desktop metadata::trusted true
+```
+
+---
+
+### Método Manual (Compilación directa)
 
 #### Compilar
 ```bash
