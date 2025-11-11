@@ -3,7 +3,6 @@
 int main()
 {
     banco miBanco;
-    caja_de_ahorro cajaAhorro;  // Cambio: usar caja_de_ahorro en vez de transaciones
     int opcion;
     string numCliente;
     
@@ -71,7 +70,13 @@ int main()
                 case 4:
                     try
                     {
-                        cajaAhorro.registrar_transaccion();  // Usa caja_de_ahorro con validación
+                        cout << "\n--- REGISTRAR TRANSACCION ---" << endl;
+                        cout << "Nota: El sistema validara que el cliente exista." << endl;
+                        
+                        // Crear una cuenta temporal para registrar la transacción
+                        // (todas las transacciones van al mismo archivo)
+                        caja_de_ahorro cuentaTemporal;
+                        cuentaTemporal.registrar_transaccion();
                     }
                     catch (const Excepcion& e)
                     {
@@ -84,9 +89,18 @@ int main()
                     {
                         cout << "\nIngrese numero de cliente para consultar saldo: ";
                         cin >> numCliente;
-                        cajaAhorro.calcular_saldo_cliente(numCliente);
-                        cout << "\n===== SALDO CLIENTE #" << numCliente << " =====" << endl;
-                        cajaAhorro.mostrar_saldo();
+                        
+                        caja_de_ahorro* cuenta = miBanco.getCuentaCliente(numCliente);
+                        if (cuenta != nullptr)
+                        {
+                            cuenta->calcular_saldo_cliente(numCliente);
+                            cout << "\n===== SALDO CLIENTE #" << numCliente << " =====" << endl;
+                            cuenta->mostrar_saldo();
+                        }
+                        else
+                        {
+                            cout << "Cliente #" << numCliente << " no encontrado." << endl;
+                        }
                     }
                     catch (const Excepcion& e)
                     {
@@ -95,19 +109,43 @@ int main()
                     break;
 
                 case 6:
-                    cajaAhorro.mostrar_transaccion_cliente();
+                    {
+                        cout << "\nIngrese numero de cliente: ";
+                        cin >> numCliente;
+                        
+                        caja_de_ahorro* cuenta = miBanco.getCuentaCliente(numCliente);
+                        if (cuenta != nullptr)
+                        {
+                            cuenta->mostrar_transaccion_cliente(numCliente);
+                        }
+                        else
+                        {
+                            cout << "Cliente #" << numCliente << " no encontrado." << endl;
+                        }
+                    }
                     break;
 
                 case 7:
-                    cajaAhorro.mostrar_transacciones();
+                    {
+                        // Para mostrar todas las transacciones, usamos cualquier cuenta
+                        // ya que todas acceden al mismo archivo
+                        caja_de_ahorro cuentaTemporal;
+                        cuentaTemporal.mostrar_transacciones();
+                    }
                     break;
 
                 case 8:
-                    cajaAhorro.transacciones_anio();
+                    {
+                        caja_de_ahorro cuentaTemporal;
+                        cuentaTemporal.transacciones_anio();
+                    }
                     break;
 
                 case 9:
-                    cajaAhorro.transacciones_mes();
+                    {
+                        caja_de_ahorro cuentaTemporal;
+                        cuentaTemporal.transacciones_mes();
+                    }
                     break;
                     
                 case 0:

@@ -33,6 +33,7 @@ public:
     ExcepcionMemoria(string msg);
 };
 
+// Clase persona (herencia para cliente y personal)
 class persona
 {
 private:
@@ -51,6 +52,8 @@ public:
     string getAnioIngreso();
     virtual void mostrar_datos();
 };
+
+// Estructuras para archivos
 
 struct archivo_clientes
 {
@@ -73,60 +76,38 @@ struct archivo_transacciones
     string Monto;
 };
 
-class transaciones {
+//Clase Transacciones
+
+class transacciones {
     protected:
-        archivo_transacciones transaccion;
-        // Arreglo en memoria para todas las transacciones (seguimos el patrón de `banco`)
-        archivo_transacciones* transacciones;
+        archivo_transacciones* _transacciones;
         int totalTransacciones;
         int capacidadTransacciones;
     public: 
-        // Destructor para liberar memoria interna si corresponde
-        ~transaciones();
-
-        // Setters / Getters para la transaccion actual (transaccion)
-        void setNumCliente(const string&);
-        string getNumCliente() const;
-        void setAnio(const string&);
-        string getAnio() const;
-        void setMes(const string&);
-        string getMes() const;
-        void setDia(const string&);
-        string getDia() const;
-        void setTipoTransaccion(const string&);
-        string getTipoTransaccion() const;
-        void setTipoMoneda(const string&);
-        string getTipoMoneda() const;
-        void setMonto(const string&);
-        string getMonto() const;
-    transaciones();
-    transaciones(archivo_transacciones);
-    void setTransaccion(const archivo_transacciones&);
-    archivo_transacciones getTransaccion();
-        void mostrar_transaccion_cliente();
+        transacciones();
+        ~transacciones();
+        void mostrar_transaccion_cliente(string numCliente);
         void mostrar_transacciones();
         void transacciones_anio();
         void transacciones_mes();
-        // Nuevos métodos para cargar/guardar todas las transacciones en memoria
         void cargarTransaccionesDesdeArchivo();
         void guardarTransaccionesEnArchivo();
 };
 
-class caja_de_ahorro : public transaciones{
+class caja_de_ahorro : public transacciones{
     private:
         float saldodolares;
         float saldopesos;
     public:
         caja_de_ahorro();
-        caja_de_ahorro(archivo_transacciones, float, float);
         void setSaldoDolares(float);
         float getSaldoDolares();
         void setSaldoPesos(float);
         float getSaldoPesos();
+
         void mostrar_saldo();
-        // Métodos específicos de caja de ahorro
         void calcular_saldo_cliente(string numCliente);
-        void registrar_transaccion(); // Override con validación de saldo
+        void registrar_transaccion(); 
 };
 
 class cliente : public persona
@@ -135,6 +116,7 @@ private:
     string tipo_cliente;
     string estado_cliente;
     string numero_cliente;
+    caja_de_ahorro cuenta;
 public:
     cliente();
     cliente(string, string, string, string, string, string);
@@ -144,6 +126,10 @@ public:
     string getEstadoCliente();
     void setNumeroCliente(string);
     string getNumeroCliente();
+    
+    // Acceso a la cuenta del cliente
+    caja_de_ahorro& getCuenta();
+
     void mostrar_datos();
     void mostrar_info_tarjeta_credito();
 };
@@ -165,8 +151,7 @@ class banco
 {
 private:
     string nombre_banco;
-    archivo_clientes lista_clientes;
-    personal pr;
+    personal pr; 
     
     cliente* clientes;
     int totalClientes;
@@ -174,23 +159,22 @@ private:
     
 public:
     banco();
-    banco(string, archivo_clientes, personal);
-    ~banco();  // Destructor para liberar memoria
+    banco(string, personal);
+    ~banco();
     
     void setNombreBanco(string);
     string getNombreBanco();
-    void setArchivoClientes(archivo_clientes);
-    archivo_clientes getArchivoClientes();
     void setPersonal(personal);
     personal getPersonal();
     void mostrar_datos();
     
-    // Funciones para cargar/guardar desde archivo
     void cargarDesdeArchivo();
     void guardarEnArchivo();
     
-    // Funciones de gestión de clientes (usando POO)
     void mostrarListaClientes();
     void mostrarDetallesCliente(string numCliente);
     void cambiarEstadoCliente(string numCliente);
+    
+    // Acceso a la cuenta de un cliente específico
+    caja_de_ahorro* getCuentaCliente(string numCliente);
 };

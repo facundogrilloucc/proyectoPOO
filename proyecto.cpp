@@ -180,16 +180,16 @@ void cliente::mostrar_datos()
 void cliente::mostrar_info_tarjeta_credito()
 {
     cout << "Informacion de Tarjeta de Credito: ";
-    
-    if (tipo_cliente == "PLATA")
+
+    if (tipo_cliente == "PLATA" || tipo_cliente == "Plata")
     {
         cout << "No tiene acceso a tarjeta de credito." << endl;
     }
-    else if (tipo_cliente == "ORO")
+    else if (tipo_cliente == "ORO" || tipo_cliente == "Oro")
     {
         cout << "Tarjeta Credix - Limite: $250,000" << endl;
     }
-    else if (tipo_cliente == "PLATINO")
+    else if (tipo_cliente == "PLATINO" || tipo_cliente == "Platino")
     {
         cout << "Tarjeta Premium - Limite: $500,000" << endl;
     }
@@ -197,6 +197,11 @@ void cliente::mostrar_info_tarjeta_credito()
     {
         cout << "Tipo de cliente no reconocido." << endl;
     }
+}
+
+caja_de_ahorro& cliente::getCuenta()
+{
+    return cuenta;
 }
 
 // Implementación de la clase personal
@@ -249,16 +254,6 @@ string banco::getNombreBanco()
     return nombre_banco;
 }
 
-void banco::setArchivoClientes(archivo_clientes _lista_clientes)
-{
-    lista_clientes = _lista_clientes;
-}
-
-archivo_clientes banco::getArchivoClientes()
-{
-    return lista_clientes;
-}
-
 void banco::setPersonal(personal _pr)
 {
     pr = _pr;
@@ -286,7 +281,6 @@ void banco::cargarDesdeArchivo()
 
         totalClientes = 0;
 
-        // Leer clientes y crear objetos usando setters
         while (true)
         {
             // Si necesitamos más espacio, redimensionar
@@ -298,7 +292,6 @@ void banco::cargarDesdeArchivo()
                 if (nuevosClientes == nullptr)
                     throw ExcepcionMemoria("No se pudo redimensionar el arreglo de clientes");
 
-                // Copiar objetos existentes
                 for (int i = 0; i < totalClientes; i++)
                 {
                     nuevosClientes[i] = clientes[i];
@@ -307,7 +300,6 @@ void banco::cargarDesdeArchivo()
                 // Liberar memoria anterior
                 delete[] clientes;
 
-                // Asignar nuevo arreglo
                 clientes = nuevosClientes;
             }
 
@@ -327,10 +319,10 @@ void banco::cargarDesdeArchivo()
             if (!getline(archivo, numCliente))
                 break; // Línea 6: NumCliente
 
-            // Validar datos numéricos antes de guardar
-            convertirALong(dni);        // Valida que DNI sea número
-            convertirAEntero(ingreso);  // Valida que año sea número
-            convertirALong(numCliente); // Valida que número de cliente sea número
+            // Convertir datos numericos
+            convertirALong(dni);
+            convertirAEntero(ingreso);
+            convertirALong(numCliente);
 
             clientes[totalClientes].setNombre(nombre);
             clientes[totalClientes].setDNI(dni);
@@ -470,48 +462,41 @@ void banco::cambiarEstadoCliente(string numCliente)
         cout << "\nCliente #" << numCliente << " no encontrado." << endl;
 }
 
-// Implementación de la clase transaciones
-transaciones::transaciones()
+// Función para obtener la cuenta de un cliente específico
+caja_de_ahorro* banco::getCuentaCliente(string numCliente)
 {
-    // transaccion es un objeto por valor
-    transacciones = nullptr;
+    for (int i = 0; i < totalClientes; i++)
+    {
+        if (clientes[i].getNumeroCliente() == numCliente)
+        {
+            return &clientes[i].getCuenta();
+        }
+    }
+    return nullptr;  // Cliente no encontrado
+}
+
+// Implementación de la clase transacciones
+transacciones::transacciones()
+{
+    _transacciones = nullptr;
     totalTransacciones = 0;
     capacidadTransacciones = 0;
 }
 
-// Destructor: liberar solo el arreglo dinámico
-transaciones::~transaciones()
+transacciones::~transacciones()
 {
-    if (transacciones != nullptr)
-        delete[] transacciones;
+    if (_transacciones != nullptr)
+        delete[] _transacciones;
 }
 
-transaciones::transaciones(archivo_transacciones _transaccion)
-{
-    transaccion = _transaccion;
-    transacciones = nullptr;
-    totalTransacciones = 0;
-    capacidadTransacciones = 0;
-}
-
-void transaciones::setTransaccion(const archivo_transacciones &_transaccion)
-{
-    transaccion = _transaccion;
-}
-
-archivo_transacciones transaciones::getTransaccion()
-{
-    return transaccion;
-}
-
-// Cargar todas las transacciones desde 'transacciones.txt' al arreglo en memoria
-void transaciones::cargarTransaccionesDesdeArchivo()
+// Cargar todas las transacciones desde archivo
+void transacciones::cargarTransaccionesDesdeArchivo()
 {
     // Liberar arreglo previo si existe
-    if (transacciones != nullptr)
+    if (_transacciones != nullptr)
     {
-        delete[] transacciones;
-        transacciones = nullptr;
+        delete[] _transacciones;
+        _transacciones = nullptr;
         totalTransacciones = 0;
         capacidadTransacciones = 0;
     }
@@ -520,7 +505,7 @@ void transaciones::cargarTransaccionesDesdeArchivo()
 
     // Inicializar con capacidad base
     capacidadTransacciones = 10;
-    transacciones = new archivo_transacciones[capacidadTransacciones];
+    _transacciones = new archivo_transacciones[capacidadTransacciones];
     totalTransacciones = 0;
 
     while (true)
@@ -541,11 +526,10 @@ void transaciones::cargarTransaccionesDesdeArchivo()
         if (!getline(archivo, at.Monto))
             break;
 
-        // Validar campos numéricos manteniendo el modelo de strings
-        convertirALong(at.NumCliente); // debe ser numérico
-        convertirAEntero(at.anio);     // año numérico
-        convertirAEntero(at.mes);      // mes numérico
-        convertirAEntero(at.dia);      // día numérico
+        convertirALong(at.NumCliente);
+        convertirAEntero(at.anio);
+        convertirAEntero(at.mes);
+        convertirAEntero(at.dia);
 
         // Redimensionar si es necesario
         if (totalTransacciones >= capacidadTransacciones)
@@ -553,20 +537,20 @@ void transaciones::cargarTransaccionesDesdeArchivo()
             int nuevaCap = capacidadTransacciones * 2;
             archivo_transacciones *nuevos = new archivo_transacciones[nuevaCap];
             for (int i = 0; i < totalTransacciones; i++)
-                nuevos[i] = transacciones[i];
-            delete[] transacciones;
-            transacciones = nuevos;
+                nuevos[i] = _transacciones[i];
+            delete[] _transacciones;
+            _transacciones = nuevos;
             capacidadTransacciones = nuevaCap;
         }
 
-        transacciones[totalTransacciones++] = at;
+        _transacciones[totalTransacciones++] = at;
     }
 
     archivo.close();
 }
 
 // Guardar todas las transacciones desde el arreglo
-void transaciones::guardarTransaccionesEnArchivo()
+void transacciones::guardarTransaccionesEnArchivo()
 {
     ofstream archivo("transacciones.txt");
     if (!archivo.is_open())
@@ -577,95 +561,21 @@ void transaciones::guardarTransaccionesEnArchivo()
 
     for (int i = 0; i < totalTransacciones; i++)
     {
-        archivo << transacciones[i].NumCliente << endl
-                << transacciones[i].anio << endl
-                << transacciones[i].mes << endl
-                << transacciones[i].dia << endl
-                << transacciones[i].TipoTransaccion << endl
-                << transacciones[i].TipoMoneda << endl
-                << transacciones[i].Monto << endl;
+        archivo << _transacciones[i].NumCliente << endl
+                << _transacciones[i].anio << endl
+                << _transacciones[i].mes << endl
+                << _transacciones[i].dia << endl
+                << _transacciones[i].TipoTransaccion << endl
+                << _transacciones[i].TipoMoneda << endl
+                << _transacciones[i].Monto << endl;
     }
 
     archivo.close();
 }
 
-void transaciones::setNumCliente(const string &v)
-{
-    transaccion.NumCliente = v;
-}
-
-string transaciones::getNumCliente() const
-{
-    return transaccion.NumCliente;
-}
-
-void transaciones::setAnio(const string &v)
-{
-    transaccion.anio = v;
-}
-
-string transaciones::getAnio() const
-{
-    return transaccion.anio;
-}
-
-void transaciones::setMes(const string &v)
-{
-    transaccion.mes = v;
-}
-
-string transaciones::getMes() const
-{
-    return transaccion.mes;
-}
-
-void transaciones::setDia(const string &v)
-{
-    transaccion.dia = v;
-}
-
-string transaciones::getDia() const
-{
-    return transaccion.dia;
-}
-
-void transaciones::setTipoTransaccion(const string &v)
-{
-    transaccion.TipoTransaccion = v;
-}
-
-string transaciones::getTipoTransaccion() const
-{
-    return transaccion.TipoTransaccion;
-}
-
-void transaciones::setTipoMoneda(const string &v)
-{
-    transaccion.TipoMoneda = v;
-}
-
-string transaciones::getTipoMoneda() const
-{
-    return transaccion.TipoMoneda;
-}
-
-void transaciones::setMonto(const string &v)
-{
-    transaccion.Monto = v;
-}
-
-string transaciones::getMonto() const
-{
-    return transaccion.Monto;
-}
-
 // Mostrar transacciones de un cliente
-void transaciones::mostrar_transaccion_cliente()
+void transacciones::mostrar_transaccion_cliente(string numCliente)
 {
-    string numCliente;
-    cout << "Ingrese numero de cliente a listar transacciones: ";
-    cin >> numCliente;
-
     ifstream archivo("transacciones.txt");
     if (!archivo.is_open())
     {
@@ -674,6 +584,7 @@ void transaciones::mostrar_transaccion_cliente()
     }
 
     bool trans = false;
+    cout << "\n===== TRANSACCIONES DEL CLIENTE #" << numCliente << " =====" << endl;
     while (true)
     {
         archivo_transacciones at;
@@ -707,7 +618,7 @@ void transaciones::mostrar_transaccion_cliente()
 }
 
 // Mostrar todas las transacciones
-void transaciones::mostrar_transacciones()
+void transacciones::mostrar_transacciones()
 {
     ifstream archivo("transacciones.txt");
     if (!archivo.is_open())
@@ -743,7 +654,7 @@ void transaciones::mostrar_transacciones()
 }
 
 // Informes por año
-void transaciones::transacciones_anio()
+void transacciones::transacciones_anio()
 {
     string anio;
     cout << "Ingrese año a filtrar (YYYY): ";
@@ -791,7 +702,7 @@ void transaciones::transacciones_anio()
 }
 
 // Informes por mes (pide año y mes)
-void transaciones::transacciones_mes()
+void transacciones::transacciones_mes()
 {
     string anio, mes;
     cout << "Ingrese anio (YYYY): ";
@@ -847,12 +758,6 @@ caja_de_ahorro::caja_de_ahorro()
     saldopesos = 0.0;
 }
 
-caja_de_ahorro::caja_de_ahorro(archivo_transacciones at, float dolares, float pesos)
-{
-    saldodolares = dolares;
-    saldopesos = pesos;
-}
-
 void caja_de_ahorro::setSaldoDolares(float sd)
 {
     saldodolares = sd;
@@ -884,36 +789,36 @@ void caja_de_ahorro::calcular_saldo_cliente(string numCliente)
     // Resetear saldos
     setSaldoDolares(0.0);
     setSaldoPesos(0.0);
-    
+
     // Cargar transacciones desde archivo
     cargarTransaccionesDesdeArchivo();
-    
+
     // Recorrer transacciones del cliente y calcular saldos
     for (int i = 0; i < totalTransacciones; i++)
     {
-        if (transacciones[i].NumCliente == numCliente)
+        if (_transacciones[i].NumCliente == numCliente)
         {
             try
             {
                 // Convertir monto a float (el monto está guardado como string)
-                float monto = convertirAFloat(transacciones[i].Monto);
-                
-                if (transacciones[i].TipoMoneda == "USD")
+                float monto = convertirAFloat(_transacciones[i].Monto);
+
+                if (_transacciones[i].TipoMoneda == "USD")
                 {
-                    if (transacciones[i].TipoTransaccion == "DEPOSITO")
+                    if (_transacciones[i].TipoTransaccion == "DEPOSITO")
                         setSaldoDolares(getSaldoDolares() + monto);
-                    else if (transacciones[i].TipoTransaccion == "EXTRACCION")
+                    else if (_transacciones[i].TipoTransaccion == "EXTRACCION")
                         setSaldoDolares(getSaldoDolares() - monto);
                 }
-                else if (transacciones[i].TipoMoneda == "ARS")
+                else if (_transacciones[i].TipoMoneda == "ARS")
                 {
-                    if (transacciones[i].TipoTransaccion == "DEPOSITO")
+                    if (_transacciones[i].TipoTransaccion == "DEPOSITO")
                         setSaldoPesos(getSaldoPesos() + monto);
-                    else if (transacciones[i].TipoTransaccion == "EXTRACCION")
+                    else if (_transacciones[i].TipoTransaccion == "EXTRACCION")
                         setSaldoPesos(getSaldoPesos() - monto);
                 }
             }
-            catch (const ExcepcionArgumentoInvalido& e)
+            catch (const ExcepcionArgumentoInvalido &e)
             {
                 cerr << "Advertencia: Monto invalido en transaccion, se omite." << endl;
             }
@@ -921,7 +826,7 @@ void caja_de_ahorro::calcular_saldo_cliente(string numCliente)
     }
 }
 
-// Registrar transacción con validación de saldo
+// Registrar transacción
 void caja_de_ahorro::registrar_transaccion()
 {
     try
@@ -930,28 +835,37 @@ void caja_de_ahorro::registrar_transaccion()
 
         cout << "Ingrese numero de cliente: ";
         cin >> at.NumCliente;
-        
-        cout << "Tipo de transaccion (EXTRACCION/DEPOSITO): ";
+
+        cout << "Tipo de transaccion (E=Extraccion / D=Deposito): ";
         cin >> at.TipoTransaccion;
-        
-        // Convertir a mayúsculas para validación uniforme
-        for (auto &c : at.TipoTransaccion) c = toupper(c);
-        
-        cout << "Tipo de moneda (USD/ARS): ";
+
+        if (at.TipoTransaccion == "E" || at.TipoTransaccion == "e")
+            at.TipoTransaccion = "EXTRACCION";
+        else if (at.TipoTransaccion == "D" || at.TipoTransaccion == "d")
+            at.TipoTransaccion = "DEPOSITO";
+        else
+            throw ExcepcionArgumentoInvalido("Tipo de transaccion invalido. Use 'E' para Extraccion o 'D' para Deposito.");
+
+        cout << "Tipo de moneda (U=USD / A=ARS): ";
         cin >> at.TipoMoneda;
-        
-        for (auto &c : at.TipoMoneda) c = toupper(c);
-        
+
+        if (at.TipoMoneda == "U" || at.TipoMoneda == "u")
+            at.TipoMoneda = "USD";
+        else if (at.TipoMoneda == "A" || at.TipoMoneda == "a")
+            at.TipoMoneda = "ARS";
+        else
+            throw ExcepcionArgumentoInvalido("Tipo de moneda invalido. Use 'U' para USD o 'A' para ARS.");
+
         cout << "Monto: ";
         cin >> at.Monto;
-        
+
         // Si es EXTRACCION, validar saldo suficiente
         if (at.TipoTransaccion == "EXTRACCION")
         {
             calcular_saldo_cliente(at.NumCliente);
-            
+
             float montoFloat = convertirAFloat(at.Monto);
-            
+
             if (at.TipoMoneda == "USD")
             {
                 if (getSaldoDolares() < montoFloat)
@@ -963,7 +877,7 @@ void caja_de_ahorro::registrar_transaccion()
                     throw ExcepcionArgumentoInvalido("Saldo insuficiente en ARS. Saldo actual: " + to_string(getSaldoPesos()));
             }
         }
-        
+
         cout << "Ingrese anio (YYYY): ";
         cin >> at.anio;
         cout << "Ingrese mes (MM o numero): ";
@@ -971,14 +885,13 @@ void caja_de_ahorro::registrar_transaccion()
         cout << "Ingrese dia (DD): ";
         cin >> at.dia;
 
-        // Validaciones de formato numérico
         convertirALong(at.NumCliente);
         convertirAEntero(at.anio);
         convertirAEntero(at.mes);
         convertirAEntero(at.dia);
-        convertirAFloat(at.Monto); // Valida que sea número decimal
+        convertirAFloat(at.Monto);
 
-        // Cargar transacciones, anexar la nueva y guardar
+        // Cargar transacciones
         cargarTransaccionesDesdeArchivo();
 
         // Redimensionar si es necesario
@@ -987,17 +900,17 @@ void caja_de_ahorro::registrar_transaccion()
             int nuevaCap = (capacidadTransacciones == 0) ? 10 : capacidadTransacciones * 2;
             archivo_transacciones *nuevos = new archivo_transacciones[nuevaCap];
             for (int i = 0; i < totalTransacciones; i++)
-                nuevos[i] = transacciones[i];
-            delete[] transacciones;
-            transacciones = nuevos;
+                nuevos[i] = _transacciones[i];
+            delete[] _transacciones;
+            _transacciones = nuevos;
             capacidadTransacciones = nuevaCap;
         }
 
-        transacciones[totalTransacciones++] = at;
+        _transacciones[totalTransacciones++] = at;
         guardarTransaccionesEnArchivo();
 
         cout << "\nTransaccion registrada correctamente." << endl;
-        
+
         // Mostrar saldo actualizado
         calcular_saldo_cliente(at.NumCliente);
         cout << "Saldo actualizado del cliente #" << at.NumCliente << ":" << endl;

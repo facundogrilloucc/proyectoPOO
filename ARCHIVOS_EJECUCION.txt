@@ -1,0 +1,82 @@
+# 📋 Resumen de Archivos de Ejecución
+
+Se han creado los siguientes archivos para facilitar la ejecución del programa:
+
+## ✅ Archivos Creados
+
+### 1. `run.sh` (Linux/Mac) ⚡
+- **Qué hace:** Compila y ejecuta el programa automáticamente
+- **Cómo usar:** 
+  - Terminal: `./run.sh`
+  - Explorador: Doble clic (puede requerir "Ejecutar en terminal")
+- **Estado:** ✅ Permisos de ejecución otorgados
+
+### 2. `run.bat` (Windows) 🪟
+- **Qué hace:** Compila y ejecuta el programa automáticamente
+- **Cómo usar:**
+  - CMD: `run.bat`
+  - Explorador: Doble clic
+- **Estado:** ✅ Listo para usar
+
+### 3. `SistemaBancario.desktop` (Linux) 🐧
+- **Qué hace:** Lanzador de aplicación para Linux
+- **Cómo usar:** Doble clic desde el explorador de archivos
+- **Ventaja:** Se abre en una nueva terminal
+- **Estado:** ✅ Permisos de ejecución otorgados
+
+### 4. `INSTRUCCIONES.md` 📖
+- **Qué contiene:** Guía rápida de ejecución
+- **Incluye:** Solución de problemas comunes
+- **Para quién:** Usuarios que necesitan empezar rápido
+
+## 🎯 Recomendación de Uso
+
+### **Linux (Fedora)**
+```bash
+# Opción más fácil:
+./run.sh
+
+# O doble clic en:
+SistemaBancario.desktop
+```
+
+### **Windows**
+```cmd
+# Doble clic en:
+run.bat
+```
+
+## 📝 Características de los Scripts
+
+✅ **Compilación automática** antes de ejecutar  
+✅ **Verificación de errores** de compilación  
+✅ **Mensajes informativos** durante el proceso  
+✅ **Pausa al finalizar** para ver resultados  
+✅ **Encabezado visual** del programa  
+✅ **Compatible** con rutas con espacios  
+
+## 🔧 Personalización
+
+Si necesitas modificar algo:
+
+### `run.sh`
+- Cambiar compilador: Edita la línea `g++ -std=c++11...`
+- Cambiar nombre del ejecutable: Cambia `-o app` por `-o tu_nombre`
+
+### `run.bat`
+- Similar a run.sh, pero sintaxis de Windows
+- Usar `REM` para comentarios
+
+### `SistemaBancario.desktop`
+- Cambiar icono: Edita `Icon=utilities-terminal`
+- Cambiar nombre: Edita `Name=Sistema Bancario`
+
+## ✅ Estado Final
+
+Todos los archivos están creados y funcionando correctamente:
+- ✓ Scripts tienen permisos de ejecución
+- ✓ README.md actualizado con instrucciones
+- ✓ INSTRUCCIONES.md creado para referencia rápida
+- ✓ Compatible con Linux, Mac y Windows
+
+**¡Todo listo para ejecutar el programa con un simple doble clic!** 🚀
