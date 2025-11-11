@@ -493,6 +493,12 @@ void transaciones::cargarTransaccionesDesdeArchivo()
         if (!getline(archivo, at.TipoMoneda)) break;
         if (!getline(archivo, at.Monto)) break;
 
+        // Validar campos numéricos manteniendo el modelo de strings
+        convertirALong(at.NumCliente); // debe ser numérico
+        convertirAEntero(at.anio);     // año numérico
+        convertirAEntero(at.mes);      // mes numérico
+        convertirAEntero(at.dia);      // día numérico
+
         // Redimensionar si es necesario
         if (totalTransacciones >= capacidadTransacciones)
         {
@@ -628,6 +634,12 @@ void transaciones::registrar_transaccion()
         cout << "Monto: "; 
         cin >> at.Monto;
 
+    // Validaciones de formato numérico (siguiendo el patrón del módulo clientes)
+    convertirALong(at.NumCliente);
+    convertirAEntero(at.anio);
+    convertirAEntero(at.mes);
+    convertirAEntero(at.dia);
+
         // Cargar todas las transacciones en memoria, anexar la nueva y guardar todo (sin append)
         cargarTransaccionesDesdeArchivo();
 
@@ -659,7 +671,7 @@ void transaciones::registrar_transaccion()
     }
     catch (const ExcepcionArgumentoInvalido& e)
     {
-        cerr << "Error al registrar transaccion: " << e.what() << endl;
+        cerr << "Error al registrar transaccion: " << e.error() << endl;
     }
 }
 
