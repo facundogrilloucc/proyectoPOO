@@ -1,5 +1,76 @@
 #include "proyecto.h"
 
+// Implementación de las clases de excepciones
+Excepcion::Excepcion()
+{
+    mensaje = "Error desconocido";
+}
+
+Excepcion::Excepcion(string msg)
+{
+    mensaje = msg;
+}
+
+ExcepcionArgumentoInvalido::ExcepcionArgumentoInvalido()
+{
+    mensaje = "Argumento inválido";
+}
+
+ExcepcionArgumentoInvalido::ExcepcionArgumentoInvalido(string msg)
+{
+    mensaje = msg;
+}
+
+ExcepcionMemoria::ExcepcionMemoria()
+{
+    mensaje = "Error de asignación de memoria";
+}
+
+ExcepcionMemoria::ExcepcionMemoria(string msg)
+{
+    mensaje = msg;
+}
+
+string Excepcion::error() const
+{
+    return mensaje;
+}
+
+Excepcion::~Excepcion(){}
+
+// Funciones de conversión con validación
+int convertirAEntero(string entrada)
+{
+    try
+    {
+        return stoi(entrada);
+    }
+    catch (const invalid_argument&)
+    {
+        throw ExcepcionArgumentoInvalido("Entrada no es un numero valido: " + entrada);
+    }
+    catch (const out_of_range&)
+    {
+        throw ExcepcionArgumentoInvalido("Numero fuera de rango: " + entrada);
+    }
+}
+
+long convertirALong(string entrada)
+{
+    try
+    {
+        return stol(entrada);
+    }
+    catch (const invalid_argument&)
+    {
+        throw ExcepcionArgumentoInvalido("Entrada no es un numero valido: " + entrada);
+    }
+    catch (const out_of_range&)
+    {
+        throw ExcepcionArgumentoInvalido("Numero fuera de rango: " + entrada);
+    }
+}
+
 // Implementación de la clase persona
 persona::persona() {}
 persona::persona(string _dni, string _nombre, string _anio_ingreso)
@@ -213,7 +284,11 @@ void banco::cargarDesdeArchivo()
             if (!getline(archivo, estado)) break;      // Línea 5: Estado
             if (!getline(archivo, numCliente)) break;  // Línea 6: NumCliente
             
-            // Crear objeto cliente usando SETTERS
+            // Validar datos numéricos antes de guardar
+            convertirALong(dni);           // Valida que DNI sea número
+            convertirAEntero(ingreso);     // Valida que año sea número
+            convertirALong(numCliente);    // Valida que número de cliente sea número
+            
             clientes[totalClientes].setNombre(nombre);
             clientes[totalClientes].setDNI(dni);
             clientes[totalClientes].setAnioIngreso(ingreso);
@@ -229,11 +304,11 @@ void banco::cargarDesdeArchivo()
     }
     catch (const ExcepcionArgumentoInvalido& e)
     {
-        cerr << "Error al cargar: " << e.what() << endl;
+        cerr << "Error al cargar: " << e.error() << endl;
     }
     catch (const ExcepcionMemoria& e)
     {
-        cerr << "Error de memoria: " << e.what() << endl;
+        cerr << "Error de memoria: " << e.error() << endl;
     }
 }
 
@@ -261,13 +336,13 @@ void banco::guardarEnArchivo()
     }
     catch (const ExcepcionArgumentoInvalido& e)
     {
-        cerr << "Error al guardar: " << e.what() << endl;
+        cerr << "Error al guardar: " << e.error() << endl;
     }
 }
 
 // Implementación de las funciones de gestión de clientes del banco
 
-// Función para mostrar la lista de todos los clientes (POO con getters)
+// Función para mostrar la lista de todos los clientes
 void banco::mostrarListaClientes()
 {
     cout << "\n========== LISTA DE CLIENTES ==========" << endl;
@@ -287,7 +362,7 @@ void banco::mostrarListaClientes()
     cout << "========================================\n" << endl;
 }
 
-// Función para mostrar detalles del cliente (POO - usa mostrar_datos())
+// Función para mostrar detalles del cliente según su número
 void banco::mostrarDetallesCliente(string numCliente)
 {
     if (numCliente.empty())

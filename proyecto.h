@@ -3,30 +3,33 @@
 #include <sstream>
 using namespace std;
 
-// Clases de excepciones personalizadas (solo 2 tipos: ArgumentoInvalido y Memoria)
+int convertirAEntero(string entrada);
+long convertirALong(string entrada);
+
+// Clases de excepciones (ArgumentoInvalido y Memoria)
 class Excepcion
 {
 protected:
     string mensaje;
 public:
-    Excepcion() : mensaje("Error desconocido") {}
-    Excepcion(string msg) : mensaje(msg) {}
-    virtual string what() const { return mensaje; }
-    virtual ~Excepcion() {}
+    Excepcion();
+    Excepcion(string msg);
+    virtual string error() const;
+    virtual ~Excepcion();
 };
 
 class ExcepcionArgumentoInvalido : public Excepcion
 {
 public:
-    ExcepcionArgumentoInvalido() : Excepcion("Argumento inválido") {}
-    ExcepcionArgumentoInvalido(string msg) : Excepcion(msg) {}
+    ExcepcionArgumentoInvalido();
+    ExcepcionArgumentoInvalido(string msg);
 };
 
 class ExcepcionMemoria : public Excepcion
 {
 public:
-    ExcepcionMemoria() : Excepcion("Error de asignación de memoria") {}
-    ExcepcionMemoria(string msg) : Excepcion(msg) {}
+    ExcepcionMemoria();
+    ExcepcionMemoria(string msg);
 };
 
 class persona

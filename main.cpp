@@ -50,7 +50,7 @@ int main()
                     }
                     catch (const ExcepcionArgumentoInvalido& e)
                     {
-                        cerr << "Error: " << e.what() << endl;
+                        cerr << "Error: " << e.error() << endl;
                     }
                     break;
                     
@@ -63,7 +63,7 @@ int main()
                     }
                     catch (const ExcepcionArgumentoInvalido& e)
                     {
-                        cerr << "Error: " << e.what() << endl;
+                        cerr << "Error: " << e.error() << endl;
                     }
                     break;
 
@@ -104,12 +104,12 @@ int main()
         }
         catch (const ExcepcionArgumentoInvalido& e)
         {
-            cerr << "Error: " << e.what() << endl;
+            cerr << "Error: " << e.error() << endl;
             opcion = -1; // Para que no salga del bucle
         }
         catch (const Excepcion& e)
         {
-            cerr << "Error inesperado: " << e.what() << endl;
+            cerr << "Error inesperado: " << e.error() << endl;
             opcion = -1;
         }
         
